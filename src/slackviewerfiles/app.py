@@ -79,13 +79,13 @@ def mpim_name(name):
                                  no_external_references=app.no_external_references)
 
 @app.route('/files.slack.com/<path:path>')
-def send_js(path):
+def send_files_slack_com(path):
     return flask.send_from_directory(flask._app_ctx_stack.files_path,
                                      'files.slack.com/' + path)
 
 
 @app.route('/avatars.slack-edge.com/<path:path>')
-def send_js(path):
+def send_avatars_slack_edge_com(path):
     return flask.send_from_directory(flask._app_ctx_stack.files_path,
                                      'avatars.slack-edge.com/' + path)
 
