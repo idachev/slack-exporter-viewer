@@ -5,6 +5,7 @@ services:
     image: slack-export-viewer:1.0
     container_name: slack-exporter
     restart: always
+    user: "1000:1000"
     ports:
       - 5000:5000
     volumes:
