@@ -5,11 +5,10 @@ RUN apk add --no-cache bash
 RUN apk update \
     && apk add --no-cache --virtual build-deps gcc python3-dev musl-dev \
     && apk add --no-cache jpeg-dev zlib-dev libjpeg \
-    && pip install Pillow \
+    && pip3 install Pillow \
     && apk del build-deps
 
-RUN pip3 install click flask
-RUN pip3 install emoji markdown2
+RUN pip3 install click flask emoji markdown2
 
 ENV SLACK_EXPORTER_DIR=/opt/slack-exporter
 

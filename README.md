@@ -1,5 +1,11 @@
 # Slack Exporter
 
+## Credits
+
+The slack viewer Flask Python3 code was forked from:
+
+https://github.com/hfaran/slack-export-viewer
+
 ## Step 1 - Prepare Slack API Access Token
 
 Create s Slack API Application which will be used to get access token.
@@ -105,14 +111,14 @@ It will create a new file with links that are of thumbnails which should be down
 
 Use with the same as above the `wget-all-files.sh` to download them.
 
-# Step 4 - Prepare Exported Data
+## Step 4 - Prepare Exported Data
 
 As we use a modified version of the `slack-export-viewer` to handle
 locally downloaded files/thumbs we need to replace the links in the messages.
 
 Execute this: `replace-local-files.sh`
 
-# Step 5 - Start Slack Export Viewer
+## Step 5 - Start Slack Export Viewer
 
 Execute this: 
 ```bash
@@ -123,3 +129,14 @@ It will start a Python Flask app listening on http://localhost:5000
 
 Where you could browse your exported data.
 
+## Step 6 - Start Docker Compose
+
+You can build a docker image with the viewer: `./docker/build-img.sh`
+
+To start the docker compose with mounted `exported` data use:
+```bash
+docker-compose up -d
+```
+
+It is configured to start on port 5000 with UID:GID to 1000:1000,
+if these do not work for you change them in the `docker-compose.yml` file.
