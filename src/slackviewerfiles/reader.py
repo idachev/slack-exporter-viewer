@@ -1,9 +1,8 @@
-from collections import OrderedDict
-
 import glob
 import io
 import json
 import os
+from collections import OrderedDict
 
 from slackviewerfiles.formatter import SlackFormatter
 from slackviewerfiles.message import Message
@@ -26,14 +25,15 @@ class Reader(object):
     ##################
 
     def compile_files_path(self):
-        return os.path.join(self._PATH, "files")
+        return os.path.join(self._PATH, "_files_")
 
     def compile_channels(self, channels=None):
         if isinstance(channels, str):
             channels = channels.split(',')
 
         channel_data = self._read_from_json("channels.json")
-        channel_names = [c["name"] for c in channel_data.values() if not channels or c["name"] in channels]
+        channel_names = [c["name"] for c in channel_data.values() if
+                         not channels or c["name"] in channels]
 
         return self._create_messages(channel_names, channel_data)
 
@@ -113,7 +113,10 @@ class Reader(object):
         all_mpim_users = []
 
         for mpim in mpims:
-            mpim_members = {"name": mpim["name"], "users": [] if "members" not in mpim.keys() else [self.__USER_DATA[m] for m in mpim["members"]]}
+            mpim_members = {"name": mpim["name"],
+                            "users": [] if "members" not in mpim.keys() else [self.__USER_DATA[m]
+                                                                              for m in
+                                                                              mpim["members"]]}
             all_mpim_users.append(mpim_members)
 
         return all_mpim_users
@@ -168,11 +171,11 @@ class Reader(object):
             for day in sorted(day_files):
                 with io.open(os.path.join(self._PATH, day), encoding="utf8") as f:
                     # loads all messages
-                    day_messages = json.load(f)   
+                    day_messages = json.load(f)
 
                     # sorts the messages in the json file
-                    day_messages.sort(key=Reader._extract_time) 
-                 
+                    day_messages.sort(key=Reader._extract_time)
+
                     messages.extend([Message(formatter, d) for d in day_messages])
 
             chats[name] = messages
@@ -195,7 +198,7 @@ class Reader(object):
             replies = {}
             for message in channel_data[channel_name]:
                 #   If there's a "reply_count" key, generate a list of user and timestamp dictionaries
-                if all(x in message._message.keys() for x in ['reply_count','replies']):
+                if all(x in message._message.keys() for x in ['reply_count', 'replies']):
                     #   Identify and save where we are
                     location = channel_data[channel_name].index(message)
                     reply_list = []
@@ -221,7 +224,8 @@ class Reader(object):
                 location = grouping[0] + 1
                 for reply in grouping[1]:
                     if not reply._message["text"].startswith("**Thread Reply:**"):
-                        reply._message["text"] = "**Thread Reply:** {}".format(reply._message['text'])
+                        reply._message["text"] = "**Thread Reply:** {}".format(
+                            reply._message['text'])
                     channel_data[channel_name].insert(location, reply)
                     location += 1
         return channel_data
