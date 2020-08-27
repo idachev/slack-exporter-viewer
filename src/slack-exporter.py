@@ -38,8 +38,7 @@ def get_conversation_info(channel_id):
 
     channel = response['channel']
 
-    if has_true_value(channel, 'is_archived') or \
-            ('num_members' in channel and channel['num_members'] == 0):
+    if 'num_members' in channel and channel['num_members'] == 0:
         channel['members'] = []
     else:
         rsp_members = client.api_call(
@@ -173,4 +172,6 @@ def get_conversations(out_dir, refresh=False):
 
 
 if __name__ == '__main__':
-    get_conversations('../exported', False)
+    exported_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'exported'))
+    print('Exporting in: %s' % exported_path)
+    get_conversations(exported_path, False)
