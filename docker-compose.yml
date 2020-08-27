@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+  slack-exporter:
+    image: slack-export-viewer:1.0
+    container_name: slack-exporter
+    restart: always
+    ports:
+      - 5000:5000
+    volumes:
+      - ./exported:/opt/slack-exporter/exported

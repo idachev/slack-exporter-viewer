@@ -9,13 +9,25 @@ app = flask.Flask(
 )
 
 
+def get_sorted_data():
+    channels = list(flask._app_ctx_stack.channels.keys())
+    groups = list(flask._app_ctx_stack.groups.keys())
+    dm_users = list(flask._app_ctx_stack.dm_users)
+    mpim_users = list(flask._app_ctx_stack.mpim_users)
+
+    channels.sort(key=lambda k: k.lower())
+    groups.sort(key=lambda k: k.lower())
+    dm_users.sort(key=lambda k: k['users'][0].display_name.lower())
+    mpim_users.sort(key=lambda k: k['name'].lower())
+
+    return channels, groups, dm_users, mpim_users
+
+
 @app.route("/channel/<name>/")
 def channel_name(name):
     messages = flask._app_ctx_stack.channels[name]
-    channels = list(flask._app_ctx_stack.channels.keys())
-    groups = list(flask._app_ctx_stack.groups.keys()) if flask._app_ctx_stack.groups else {}
-    dm_users = list(flask._app_ctx_stack.dm_users)
-    mpim_users = list(flask._app_ctx_stack.mpim_users)
+
+    channels, groups, dm_users, mpim_users = get_sorted_data()
 
     return flask.render_template("viewer.html", messages=messages,
                                  name=name.format(name=name),
@@ -30,10 +42,8 @@ def channel_name(name):
 @app.route("/group/<name>/")
 def group_name(name):
     messages = flask._app_ctx_stack.groups[name]
-    channels = list(flask._app_ctx_stack.channels.keys())
-    groups = list(flask._app_ctx_stack.groups.keys())
-    dm_users = list(flask._app_ctx_stack.dm_users)
-    mpim_users = list(flask._app_ctx_stack.mpim_users)
+
+    channels, groups, dm_users, mpim_users = get_sorted_data()
 
     return flask.render_template("viewer.html", messages=messages,
                                  name=name.format(name=name),
@@ -48,10 +58,8 @@ def group_name(name):
 @app.route("/dm/<id>/")
 def dm_id(id):
     messages = flask._app_ctx_stack.dms[id]
-    channels = list(flask._app_ctx_stack.channels.keys())
-    groups = list(flask._app_ctx_stack.groups.keys())
-    dm_users = list(flask._app_ctx_stack.dm_users)
-    mpim_users = list(flask._app_ctx_stack.mpim_users)
+
+    channels, groups, dm_users, mpim_users = get_sorted_data()
 
     return flask.render_template("viewer.html", messages=messages,
                                  id=id.format(id=id),
@@ -66,10 +74,8 @@ def dm_id(id):
 @app.route("/mpim/<name>/")
 def mpim_name(name):
     messages = flask._app_ctx_stack.mpims[name]
-    channels = list(flask._app_ctx_stack.channels.keys())
-    groups = list(flask._app_ctx_stack.groups.keys())
-    dm_users = list(flask._app_ctx_stack.dm_users)
-    mpim_users = list(flask._app_ctx_stack.mpim_users)
+
+    channels, groups, dm_users, mpim_users = get_sorted_data()
 
     return flask.render_template("viewer.html", messages=messages,
                                  name=name.format(name=name),
@@ -100,10 +106,8 @@ def send_avatars_slack_edge_com(path):
 
 @app.route("/")
 def index():
-    channels = list(flask._app_ctx_stack.channels.keys())
-    groups = list(flask._app_ctx_stack.groups.keys())
-    dms = list(flask._app_ctx_stack.dms.keys())
-    mpims = list(flask._app_ctx_stack.mpims.keys())
+    channels, groups, dm_users, mpim_users = get_sorted_data()
+
     if channels:
         if "general" in channels:
             return channel_name("general")
