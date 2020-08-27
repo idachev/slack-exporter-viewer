@@ -13,6 +13,7 @@ if sys.version_info[0] == 2:
     reload(sys)
     sys.setdefaultencoding('utf8')
 
+
 class SlackFormatter(object):
     "This formats messages and provides access to workspace-wide data (user and channel metadata)."
 
@@ -28,8 +29,9 @@ class SlackFormatter(object):
 
     def find_user(self, message):
         if message.get("user") == "USLACKBOT":
-            return User({"name":"slackbot"})
-        if message.get("subtype", "").startswith("bot_") and "bot_id" in message and message["bot_id"] not in self.__USER_DATA:
+            return User({"name": "slackbot"})
+        if message.get("subtype", "").startswith("bot_") and "bot_id" in message and message[
+            "bot_id"] not in self.__USER_DATA:
             bot_id = message["bot_id"]
             logging.debug("bot addition for %s", bot_id)
             if "bot_link" in message:

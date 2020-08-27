@@ -1,9 +1,8 @@
 import hashlib
+import io
 import json
 import os
 import zipfile
-import io
-
 from os.path import basename, splitext
 
 import slackviewerfiles
@@ -99,10 +98,10 @@ def create_archive_info(filepath, extracted_path, archive_sha=None):
     }
 
     with io.open(
-        os.path.join(
-            extracted_path,
-            ".slackviewer_archive_info.json",
-        ), 'w+', encoding="utf-8"
+            os.path.join(
+                extracted_path,
+                ".slackviewer_archive_info.json",
+            ), 'w+', encoding="utf-8"
     ) as f:
         s = json.dumps(archive_info, ensure_ascii=False)
         s = to_unicode(s)

@@ -17,16 +17,16 @@ body {
 }
 
 #sidebar {
-  display: inline-block;
-  width: 280px;
-  color: white;
-  text-align: left;
-  background-color: #4D394B;
-  z-index: 10;
-  overflow-y: scroll;
-  overflow-x: auto;
-  height: 100vh;
-  user-select: none;
+    display: inline-block;
+    width: 280px;
+    color: white;
+    text-align: left;
+    background-color: #4D394B;
+    z-index: 10;
+    overflow-y: scroll;
+    overflow-x: auto;
+    height: 100vh;
+    user-select: none;
 }
 
 #sidebar a {
@@ -35,27 +35,27 @@ body {
 }
 
 #sidebar h3 {
-  margin: 20px 20px;
-  color: white;
-  font-weight: 900;
+    margin: 20px 20px;
+    color: white;
+    font-weight: 900;
 }
 
 #sidebar h3:hover {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 #sidebar h3::after {
-  content: '❯ ';
-  display: inline-block;
-  -webkit-transform: rotate(90deg);
-  transform: rotate(90deg);
-  margin-left: 15px;
+    content: '❯ ';
+    display: inline-block;
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+    margin-left: 15px;
 }
 
 #sidebar h3.arrow::after {
-  margin-left: 10px;
-  -webkit-transform: none;
-  transform: none;
+    margin-left: 10px;
+    -webkit-transform: none;
+    transform: none;
 }
 
 .messages {
@@ -69,10 +69,12 @@ body {
 
 .message-container {
     clear: left;
-    min-height: 56px; // height of image plus 20px padding
+    min-height: 56px;
+/ / height of image plus 20 px padding
 }
+
 .message-container:first-child {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .message-container .user_icon {
@@ -156,8 +158,8 @@ body {
 }
 
 .list li a {
-  width: 100%;
-  padding: 10px 20px;
+    width: 100%;
+    padding: 10px 20px;
 }
 
 .list li.active {
@@ -190,9 +192,11 @@ a:hover {
 }
 
 .close {
-  display: none;
+    display: none;
 }
 
 @media screen {
-    .print-only { display: none }
+    .print-only {
+        display: none
+    }
 }

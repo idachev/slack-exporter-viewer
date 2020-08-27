@@ -60,13 +60,13 @@ def slack_build_thumb(files_path, img_path):
         thumb_iter_str = '_' + str(thumb_iter)
         if img_base_name.endswith(thumb_iter_str):
             found_thumb = thumb_iter
-            base_thumb_name = img_base_name[:-1*len(thumb_iter_str)]
+            base_thumb_name = img_base_name[:-1 * len(thumb_iter_str)]
             break
 
     if not base_thumb_name:
         return
 
-    dir_img_thumb = img_path[index + len(tmb_dir):-1*(len(img_name) + 1)]
+    dir_img_thumb = img_path[index + len(tmb_dir):-1 * (len(img_name) + 1)]
     dt_index = dir_img_thumb.rindex('-')
     if dt_index <= 0:
         return

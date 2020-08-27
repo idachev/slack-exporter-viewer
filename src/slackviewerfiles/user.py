@@ -1,6 +1,7 @@
 # User info wrapper object
 import logging
 
+
 class User(object):
     """
     Wrapper object around an entry in users.json. Behaves like a read-only dictionary if
