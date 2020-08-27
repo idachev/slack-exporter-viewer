@@ -2,10 +2,13 @@ from __future__ import unicode_literals
 
 import datetime
 import logging
+
 import emoji
 
-class Message(object):
+from slackviewerfiles.utils.slack_utils import reduce_img_size
 
+
+class Message(object):
     _DEFAULT_USER_ICON_SIZE = 72
 
     def __init__(self, formatter, message):
@@ -24,7 +27,6 @@ class Message(object):
             return self._message["bot_id"]
         else:
             logging.error("No user ID on %s", self._message)
-
 
     @property
     def user(self):
@@ -57,16 +59,16 @@ class Message(object):
 
     @property
     def attachments(self):
-        return [ LinkAttachment("ATTACHMENT", entry, self._formatter)
-            for entry in self._message.get("attachments", []) ]
+        return [LinkAttachment("ATTACHMENT", entry, self._formatter)
+                for entry in self._message.get("attachments", [])]
 
     @property
     def files(self):
-        if "file" in self._message: # this is probably an outdated case
+        if "file" in self._message:  # this is probably an outdated case
             allfiles = [self._message["file"]]
         else:
             allfiles = self._message.get("files", [])
-        return [ LinkAttachment("FILE", entry, self._formatter) for entry in allfiles ]
+        return [LinkAttachment("FILE", entry, self._formatter) for entry in allfiles]
 
     @property
     def msg(self):
@@ -76,7 +78,7 @@ class Message(object):
         return text
 
     def user_message(self, user_id):
-       return {"user": user_id}
+        return {"user": user_id}
 
     def usernames(self, reaction):
         return [
@@ -92,7 +94,7 @@ class Message(object):
         return [
             {
                 "usernames": self.usernames(reaction),
-                "name": emoji.emojize(':'+reaction.get("name")+':', use_aliases=True)
+                "name": emoji.emojize(':' + reaction.get("name") + ':', use_aliases=True)
             }
             for reaction in reactions
         ]
@@ -145,25 +147,36 @@ class LinkAttachment(object):
                 "width": self._raw.get("image_width"),
                 "height": self._raw.get("image_height"),
             }
-        else: # FILE type
+        else:  # FILE type
             thumb_key = "thumb_{}".format(size)
             logging.debug("thumb path" + thumb_key)
+            file_type = None
             if thumb_key not in self._raw:
                 # let's try some fallback logic
-                thumb_key = "thumb_{}".format(self._raw.get("filetype"))
+                file_type = self._raw.get("filetype")
+                thumb_key = "thumb_{}".format(file_type)
                 if thumb_key not in self._raw:
                     # pick the first one that shows up in the iterator
                     candidates = [k for k in self._raw.keys()
-                        if k.startswith("thumb_") and not k.endswith(("_w","_h"))]
+                                  if k.startswith("thumb_") and not k.endswith(("_w", "_h"))]
                     if candidates:
                         thumb_key = candidates[0]
                         logging.info("Fell back to thumbnail key %s for [%s]",
-                            thumb_key, self._raw.get("title"))
+                                     thumb_key, self._raw.get("title"))
             if thumb_key in self._raw:
+                src = self._raw[thumb_key]
+                width = self._raw.get(thumb_key + "_w")
+                height = self._raw.get(thumb_key + "_h")
+                if file_type in ['pdf', 'video']:
+                    width, height = reduce_img_size(width, height, size)
+
+                if not width and not height:
+                    width = size
+
                 return {
-                    "src": self._raw[thumb_key],
-                    "width": self._raw.get(thumb_key + "_w"),
-                    "height": self._raw.get(thumb_key + "_h"),
+                    "src": src,
+                    "width": width,
+                    "height": height,
                 }
             else:
                 logging.info("No thumbnail found for [%s]", self._raw.get("title"))
@@ -192,6 +205,7 @@ class LinkAttachment(object):
         if fields:
             logging.debug("Rendering with markdown markdown %s for %s", process_markdown, fields)
         return [
-            {"title": e["title"], "short": e.get("short", False), "value": self._formatter.render_text(e["value"], process_markdown)}
+            {"title": e["title"], "short": e.get("short", False),
+             "value": self._formatter.render_text(e["value"], process_markdown)}
             for e in fields
         ]

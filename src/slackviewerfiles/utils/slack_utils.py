@@ -8,20 +8,32 @@ thumb_suffix = [64, 80, 160, 360, 480, 720, 800, 960, 1024]
 priv_file_path = 'files.slack.com/files-pri/'
 
 tmb_dir = '/files-tmb/'
+download_path = '/download/'
+
+
+def reduce_img_size(width, height, to_size, min_sq_size=160):
+    size = (width, height)
+
+    if width <= min_sq_size or height <= min_sq_size:
+        return size
+
+    size = (to_size, to_size)
+
+    if to_size > min_sq_size:
+        if width > height:
+            new_height = math.ceil((height / width) * to_size)
+            size = (to_size, new_height)
+        else:
+            new_width = math.ceil((width / height) * to_size)
+            size = (new_width, to_size)
+
+    return size
 
 
 def convert_to_thumb(org_img, thumb_size, dst_img):
     im = Image.open(org_img)
 
-    size = (thumb_size, thumb_size)
-    if thumb_size > 160:
-        if im.width > im.height:
-            new_height = math.ceil((im.width / im.height) * thumb_size)
-            size = (thumb_size, new_height)
-        else:
-            new_width = math.ceil((im.height / im.width) * thumb_size)
-            size = (new_width, thumb_size)
-
+    size = reduce_img_size(im.width, im.height, thumb_size)
     im.thumbnail(size)
 
     dst_dir = os.path.dirname(dst_img)
@@ -66,3 +78,20 @@ def slack_build_thumb(files_path, img_path):
         return
 
     convert_to_thumb(org_img, found_thumb, os.path.join(files_path, img_path))
+
+
+def slack_check_download(files_path, img_path):
+    f_path = os.path.join(files_path, img_path)
+    if os.path.isfile(f_path):
+        return img_path
+
+    index = img_path.index(download_path)
+    if index == -1:
+        return img_path
+
+    nodwn_img_path = img_path[0:index] + img_path[index + len(download_path):]
+    f_nodown_path = os.path.join(files_path, nodwn_img_path)
+    if os.path.isfile(f_nodown_path):
+        return nodwn_img_path
+
+    return img_path

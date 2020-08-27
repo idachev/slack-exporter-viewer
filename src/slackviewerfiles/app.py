@@ -1,6 +1,6 @@
 import flask
 
-from slackviewerfiles.utils.slack_utils import slack_build_thumb
+from slackviewerfiles.utils.slack_utils import slack_build_thumb, slack_check_download
 
 app = flask.Flask(
     __name__,
@@ -84,7 +84,11 @@ def mpim_name(name):
 @app.route('/files.slack.com/<path:path>')
 def send_files_slack_com(path):
     f_path = 'files.slack.com/' + path
+
     slack_build_thumb(flask._app_ctx_stack.files_path, f_path)
+
+    f_path = slack_check_download(flask._app_ctx_stack.files_path, f_path)
+
     return flask.send_from_directory(flask._app_ctx_stack.files_path, f_path)
 
 
