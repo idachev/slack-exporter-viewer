@@ -1,5 +1,8 @@
+#!/usr/bin/python3
+
 import json
 import os
+
 from slackclient import SlackClient
 
 client = SlackClient(token=os.environ['SLACK_API_TOKEN'])
@@ -169,4 +172,5 @@ def get_conversations(out_dir, refresh=False):
     save_json(out_dir, 'users.json', users)
 
 
-get_conversations('./test', False)
+if __name__ == '__main__':
+    get_conversations('../exported', False)

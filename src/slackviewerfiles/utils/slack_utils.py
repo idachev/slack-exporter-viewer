@@ -42,14 +42,10 @@ def convert_to_thumb(org_img, thumb_size, dst_img):
     im.save(dst_img)
 
 
-def slack_build_thumb(files_path, img_path):
-    f_path = os.path.join(files_path, img_path)
-    if os.path.isfile(f_path):
-        return
-
-    index = img_path.index(tmb_dir)
+def slack_get_priv_path(img_path):
+    index = img_path.find(tmb_dir)
     if index == -1:
-        return
+        return None, None
 
     img_name = os.path.basename(img_path)
     img_base_name, img_ext = os.path.splitext(img_name)
@@ -64,16 +60,29 @@ def slack_build_thumb(files_path, img_path):
             break
 
     if not base_thumb_name:
-        return
+        return None, None
 
     dir_img_thumb = img_path[index + len(tmb_dir):-1 * (len(img_name) + 1)]
     dt_index = dir_img_thumb.rindex('-')
     if dt_index <= 0:
-        return
+        return None, None
 
     priv_dir = dir_img_thumb[0:dt_index]
 
-    org_img = os.path.join(files_path, priv_file_path, priv_dir, base_thumb_name + img_ext)
+    return os.path.join(priv_file_path, priv_dir, base_thumb_name + img_ext), found_thumb
+
+
+def slack_build_thumb(files_path, img_path):
+    f_path = os.path.join(files_path, img_path)
+    if os.path.isfile(f_path):
+        return
+
+    priv_path, found_thumb = slack_get_priv_path(img_path)
+
+    if priv_path is None:
+        return
+
+    org_img = os.path.join(files_path, priv_path)
     if not os.path.isfile(org_img):
         return
 
@@ -85,7 +94,7 @@ def slack_check_download(files_path, img_path):
     if os.path.isfile(f_path):
         return img_path
 
-    index = img_path.index(download_path)
+    index = img_path.find(download_path)
     if index == -1:
         return img_path
 
